@@ -24,6 +24,7 @@ function(in.raster, window.size = 25, smooth.function = mean, dark.rm = T, darkV
   # Remove dark text, boundaries etc first by assiging values as NA (if that option is selected by the user) 
   
   if(dark.rm == TRUE){
+    cat("Remove dark text, boundaries etc first by assiging values as NA")
     in.raster[in.raster[[1]]<darkValue & in.raster[[2]]<darkValue & in.raster[[3]]<darkValue]<-NA
   }
   
@@ -34,11 +35,12 @@ function(in.raster, window.size = 25, smooth.function = mean, dark.rm = T, darkV
   
   # Loop through the bands of the original raster
   for(i in 1:length(names(in.raster))){
-    
+    cat("Smoothing for band: ",i)
     # For each, perform the smoothing...
     tempband <- focal(in.raster[[i]],w=matrix(1,window.size,window.size), pad = T, padValue = NA, na.rm=TRUE, fun=smooth.function) 
     
     #... then add to the previously empty raster
+    cat("Adding smoothed layer ",i)
     ras.smoothed <- addLayer(ras.smoothed,tempband)
     
   }
@@ -46,6 +48,7 @@ function(in.raster, window.size = 25, smooth.function = mean, dark.rm = T, darkV
   
   # Then, use the frame created earlier to assign NA to those pixels outside the mapped area.
   if(pad == TRUE){
+    cat("Clipping pixels outside mapped area")
     ras.smoothed[map.frame==1]<-NA
   }
   
